@@ -1,0 +1,40 @@
+﻿@page "/"
+
+<PageTitle>Issa's Portfolio</PageTitle>
+
+<input class="input" @bind="name" type="text" placeholder="Name" />
+
+<input @onclick="Ok" type="button" value="Ok" />
+
+<br />
+
+<span class="@className">Hello, your name is @name</span>
+
+@code{
+    string? name;
+
+    string className = "blackStyle";
+
+    string realName = "Issa";
+
+    void Ok()
+    {
+        if (name is not null)
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                className = "default";
+            }
+            else
+            {
+                if (name.ToLower().Equals(realName.ToLower()))
+                {
+                    className = "correct";
+                }
+                else
+                {
+                    className = "wrong";
+                }
+            }
+    
+    }
+}
