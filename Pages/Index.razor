@@ -2,15 +2,22 @@
 
 <PageTitle>Issa's Portfolio</PageTitle>
 
-<input class="input" @bind="name" type="text" placeholder="Name" />
-
-<input @onclick="Ok" type="button" value="Ok" />
+<h1>Welcome to my portfolio</h1>
 
 <br />
 
-<span class="@className">Hello, your name is @name</span>
+<input class="input" @bind="name" type="text" placeholder="What's your name?'" />
 
-@code{
+<input class="inputBox" @onclick="Ok" type="button" value="Ok" />
+
+<br />
+
+@if (name is not null){
+    <span class="@className">Hello @name</span>
+}
+
+@code {
+
     string? name;
 
     string className = "blackStyle";
@@ -20,6 +27,7 @@
     void Ok()
     {
         if (name is not null)
+        {
             if (string.IsNullOrWhiteSpace(name))
             {
                 className = "default";
@@ -31,10 +39,13 @@
                     className = "correct";
                 }
                 else
-                {
+
                     className = "wrong";
-                }
             }
-    
+        }
+        if (className == "correct")
+        {
+
+        }
     }
 }
