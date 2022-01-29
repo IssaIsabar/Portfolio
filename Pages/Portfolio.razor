@@ -1,11 +1,59 @@
 ﻿@page "/portfolio"
+@inject PortfolioService ps;
 
 <h3>Portfolio</h3>
+<span>@message</span>
+<br />
+<input class="input" @bind="itemName" type="text" placeholder="Name of item: " />
+<br />
+<input class="input" @bind="description" type="text" placeholder="Description: " />
+<br />
+<input class="input" @bind="imageUrl" type="text" placeholder="Image url: " />
+<br />
+<input class="inputBox" type="button" value="Add" @onclick="() => 
+{
 
+    if(ps.AddItem(itemName, description, imageUrl))
+    {
+        itemName = string.Empty;  
+        description = string.Empty;
+        imageUrl = string.Empty;
+        message = string.Empty;
+    }
+    else
+    {
+       message = defaultEmptyMessage;
+    }
 
-<input class="blackInput" type="text" placeholder="Name" />
+}"/>
 
+<hr />
+
+@if (ps.Count > 0)
+{
+    @foreach(var item in ps.GetItems())
+    {
+        <div>
+            <h3>@item.Name</h3>
+            <p>@item.Description</p>
+            <img src="@item.ImageUrl" alt="@item.Name" />
+            <br />
+            <input @onclick="() => ps.DeleteItem(item)" type="button" value="Delete">
+        </div>
+        <hr />
+    }
+}
+else
+{
+    <span>No items in list</span>
+}
 
 @code {
+
+    string itemName, description, imageUrl, message;
+
+    string defaultEmptyMessage = "Some or all inputs are empty";
+
+
 
 }
