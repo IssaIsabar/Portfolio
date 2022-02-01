@@ -1,5 +1,5 @@
 ﻿@page "/portfolio"
-@inject PortfolioService ps;
+@inject IPortfolioService PortfolioService;
 
 <h3>Portfolio</h3>
 <span>@message</span>
@@ -12,45 +12,27 @@
 <br />
 <input class="inputBox" type="button" value="Add" @onclick="() => 
 {
-
-    if(ps.AddItem(itemName, description, imageUrl))
-    {
-        itemName = string.Empty;  
-        description = string.Empty;
-        imageUrl = string.Empty;
-        message = string.Empty;
-    }
-    else
-    {
-       message = defaultEmptyMessage;
-    }
-
+    PortfolioService.AddPortfolioItem(itemName, description, imageUrl);
 }"/>
 
 <hr />
 
-@if (ps.Count > 0)
-{
-    @foreach(var item in ps.GetItems())
+    @foreach(var item in PortfolioService.PortfolioItems)
     {
         <div>
             <h3>@item.Name</h3>
             <p>@item.Description</p>
             <img src="@item.ImageUrl" alt="@item.Name" />
             <br />
-            <input @onclick="() => ps.DeleteItem(item)" type="button" value="Delete">
+            <input type="button" value="Delete">
         </div>
         <hr />
     }
-}
-else
-{
-    <span>No items in list</span>
-}
+
 
 @code {
 
-    string itemName, description, imageUrl, message;
+    string? itemName, description, imageUrl, message;
 
     string defaultEmptyMessage = "Some or all inputs are empty";
 

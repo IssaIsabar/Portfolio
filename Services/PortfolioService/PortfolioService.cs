@@ -1,43 +1,51 @@
 ﻿using IssaPortfolio.Models;
+using IssaPortfolio.Services.PortfolioService;
+using System.Net.Http.Json;
 
-public class PortfolioService
+namespace IssaPortfolio.Services.PortfolioService
 {
-    public int Count => Storage.Items.Count;
-
-    public PortfolioService()
+    public class PortfolioService : IPortfolioService
     {
-   
-    }
+        private readonly HttpClient _http;
+        public List<PortfolioItem> PortfolioItems { get; set; } = new List<PortfolioItem>();
 
-    public List<PortfolioItem> GetItems()
-    { 
-        return Storage.Items;
-    }
 
-    public bool AddItem(string name, string desc, string imgUrl)
-    {
-        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(desc) && !string.IsNullOrWhiteSpace(imgUrl))
-        { 
-            var item = new PortfolioItem(name, desc, imgUrl);
-            Storage.Items.Add(item);
+        public int Count => PortfolioItems.Count;
 
-            return true;
+        public PortfolioService(HttpClient http)
+        {
+            _http = http;
         }
-        
-        return false;
 
-    }
+        public async Task LoadPortfolioItems()
+        {
+            PortfolioItems = await _http.GetFromJsonAsync<List<PortfolioItem>>("api/PortfolioItem");
+        }
 
-    public void DeleteItem(PortfolioItem item)
-    {
-        Storage.Items.Remove(item);
-    }
 
-    void UpdateItem(PortfolioItem item)
-    { 
-       
+        public async Task AddPortfolioItem(string name, string desc, string imgUrl)
+        {
+
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(desc) && !string.IsNullOrWhiteSpace(imgUrl))
+            {
+                var item = new PortfolioItem(name, desc, imgUrl);
+                await _http.PostAsJsonAsync("api/PortfolioItem", item);
+
+            }
+
+        }
     }
 }
+//    public void DeleteItem(PortfolioItem item)
+//    {
+//        Storage.Items.Remove(item);
+//    }
+
+//    void UpdateItem(PortfolioItem item)
+//    {
+
+//    }
+//}
 
 
 //public class Building
@@ -67,9 +75,9 @@ public class PortfolioService
 
 
 //public enum RoomType
-//{ 
-//    Bedroom, 
-//    Restroom, 
+//{
+//    Bedroom,
+//    Restroom,
 //    Livingroom,
 //    WC,
 //    Shower,
