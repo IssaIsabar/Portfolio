@@ -1,38 +1,49 @@
-﻿using IssaPortfolio.Models;
+﻿using IssaPortfolio.Library;
 using IssaPortfolio.Services.PortfolioService;
+using RestSharp;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace IssaPortfolio.Services.PortfolioService
 {
-    public class PortfolioService : IPortfolioService
+    public class PortfolioService
     {
-        private readonly HttpClient _http;
-        public List<PortfolioItem> PortfolioItems { get; set; } = new List<PortfolioItem>();
 
-
-        public int Count => PortfolioItems.Count;
-
-        public PortfolioService(HttpClient http)
+        public PortfolioService()
         {
-            _http = http;
+    
         }
 
-        public async Task LoadPortfolioItems()
+        public async Task<List<PortfolioItem>?> LoadPortfolioItems()
         {
-            PortfolioItems = await _http.GetFromJsonAsync<List<PortfolioItem>>("api/PortfolioItem");
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    return await client.GetFromJsonAsync<List<PortfolioItem>>("https://localhost:7142/api/PortfolioItem/getitems");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Message :{0} ", e.Message);
+            }
+            return null;
+            // PortfolioItems = await _http.GetFromJsonAsync<List<PortfolioItem>>("api/PortfolioItem");
         }
-
-
         public async Task AddPortfolioItem(string name, string desc, string imgUrl)
         {
-
             if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(desc) && !string.IsNullOrWhiteSpace(imgUrl))
             {
                 var item = new PortfolioItem(name, desc, imgUrl);
-                await _http.PostAsJsonAsync("api/PortfolioItem", item);
 
+                using (var _http = new HttpClient())
+                { 
+                    await _http.PostAsJsonAsync("api/PortfolioItem/postportfolio", item);
+                }
             }
-
         }
     }
 }

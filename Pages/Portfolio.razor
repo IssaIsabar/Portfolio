@@ -1,5 +1,6 @@
 ﻿@page "/portfolio"
-@inject IPortfolioService PortfolioService;
+@inject PortfolioService PortfolioService;
+@using IssaPortfolio.Library;
 
 <h3>Portfolio</h3>
 <span>@message</span>
@@ -10,14 +11,13 @@
 <br />
 <input class="input" @bind="imageUrl" type="text" placeholder="Image url: " />
 <br />
-<input class="inputBox" type="button" value="Add" @onclick="() => 
+<input class="inputBox" type="button" value="Add" @onclick="async () => 
 {
-    PortfolioService.AddPortfolioItem(itemName, description, imageUrl);
+    await PortfolioService.AddPortfolioItem(itemName, description, imageUrl);
 }"/>
 
 <hr />
-
-    @foreach(var item in PortfolioService.PortfolioItems)
+    @foreach(var item in items)
     {
         <div>
             <h3>@item.Name</h3>
@@ -29,13 +29,14 @@
         <hr />
     }
 
-
 @code {
+    List<PortfolioItem>? items = new List<PortfolioItem>();
 
     string? itemName, description, imageUrl, message;
-
     string defaultEmptyMessage = "Some or all inputs are empty";
 
-
-
+    protected override async Task OnInitializedAsync()
+    {
+        items = await PortfolioService.LoadPortfolioItems();
+    }
 }

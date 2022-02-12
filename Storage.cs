@@ -1,4 +1,4 @@
-﻿using IssaPortfolio.Models;
+﻿using IssaPortfolio.Library;
 
 public static class Storage
 {
